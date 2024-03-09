@@ -1,0 +1,41 @@
+//Design Code
+module mux41(output out,input s1,s0,a,b,c,d);
+  assign out=(~s1&~s0&a)|(~s1&s0&b)|(s1&~s0&c)|(s1&s0&d);
+endmodule
+
+module mux21(output out,input s1,in0,in1);
+  assign out=s1?in1:in0;
+endmodule
+
+module mux81(output out,input s2,s1,s0,a,b,c,d,e,f,g,h);
+  wire out1,out2;
+  mux41 a1(out1,s1,s0,a,b,c,d);
+  mux41 a2(out2,s1,s0,e,f,g,h);
+  mux21 a3(out,s2,out1,out2);
+endmodule
+
+//Test Bench Code
+module test();
+  reg s2,s1,s0,a,b,c,d,e,f,g,h;
+  wire out;
+  integer i;
+  mux81 dut(out,s2,s1,s0,a,b,c,d,e,f,g,h);
+  initial
+    begin
+      for(i=0;i<2048;i=i+1)
+        begin
+          {s2,s1,s0,a,b,c,d,e,f,g,h}=i;
+          #3;
+        end
+    end
+  initial
+    begin
+      $dumpfile("test.vcd");
+      $dumpvars(1);
+    end
+  initial
+    begin
+      $monitor("time=%0t,s2=%b,s1=%b,s0=%b,a=%b,b=%b,c=%b,d=%b,e=%b,f=%b,g=%b,h=%b,out=%b",$time,s2,s1,s0,a,b,c,d,e,f,g,h,out);
+    end
+endmodule
+  
